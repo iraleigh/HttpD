@@ -1,4 +1,12 @@
-﻿HttpClient httpClient = new HttpClient();
+﻿// get command line arguments
+var arguments = Environment.GetCommandLineArgs();
+var url = "http://www.google.com";
 
-var res = await httpClient.GetAsync("http://www.google.com");
-Console.WriteLine(res.StatusCode);
+if (arguments.Length > 1) {
+    url = arguments[1];
+}
+
+HttpClient httpClient = new HttpClient();
+
+var res = await httpClient.GetAsync(url);
+Console.WriteLine($"{url} returned {res.StatusCode}");
