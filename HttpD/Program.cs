@@ -1,12 +1,21 @@
 ﻿// get command line arguments
-var arguments = Environment.GetCommandLineArgs();
-var url = "http://www.google.com";
+using CommandLine;
 
-if (arguments.Length > 1) {
-    url = arguments[1];
+internal class Program
+{
+    private static async Task Main(string[] args)
+    {
+        await Parser.Default.ParseArguments<Options>(args)
+            .WithParsedAsync(async o =>
+            {
+                using HttpClient httpClient = new HttpClient();
+                var res = await httpClient.GetAsync(o.Url);
+                Console.WriteLine($"{o.Url} returned {res.StatusCode}");
+            });
+    }
 }
 
-HttpClient httpClient = new HttpClient();
-
-var res = await httpClient.GetAsync(url);
-Console.WriteLine($"{url} returned {res.StatusCode}");
+class Options {
+    [Option(Default = "http://www.google.com", HelpText = "Url to make an HTTP GET request to and collect diagnostics from")]
+    public string Url { get; set; }
+}
